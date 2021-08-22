@@ -187,7 +187,7 @@ for d in msgs
     println(typeof(d ÷ 2^40))
     println(decode(d ÷ 2^40))
 end
-    3873696748 # FAIL
+    1279869254 # FAIL
 end
 
 function encode(s)
