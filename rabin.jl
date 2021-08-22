@@ -133,7 +133,7 @@ Add comment
 =#
 
 function key(safe, k)
-    x = k + 40 # Make room for the tag
+    x = k + 32 # Make room for the tag
     p = RabinPrime(safe, big"2"^(x - 1), big"2"^x - 1)
     q = RabinPrime(safe, big"2"^(x - 1), big"2"^x - 1)
     while p == q
@@ -146,23 +146,17 @@ end
 We need dicriminate amongst the four possible roots.
 =#
 
-#using CRC32c
+using CRC32c
 
-#h::BigInt = crc32c("Michael O. Rabin")
-h = BigInt(0x08051962)
+h = BigInt(crc32c("Michael O. Rabin"))
 
 #=
 Add comment
 =#
 
 function encrypt(m, n)
-println("m = ", digits(m, base=16), typeof(m))
-println("h = ", digits(h, base=16), typeof(h))
-    t = m << 40
-println("t = ", digits(t, base=16), typeof(t))
-println("t + h = ", digits(t + h, base=16), typeof(t))
-println("(t + h) % 2^40) = ", digits((t + h) % 2^40, base=16), typeof(t))
-    return powerMod(t + h, big"2", n) # Insert tag and square (mod n)
+    t = m << 32
+    return ((t + h) * (t + h)) % n
 end
 
 #=
@@ -179,13 +173,13 @@ function decrypt(m, key)
     y = (yP * p * mQ - yQ * q * mP) % n
     msgs = [x, n - x, y, n - y]
     for d in  msgs
-        if d % 2^40 == h
-            return d ÷ 2^40
+        if d % 2^32 == h
+            return d ÷ 2^32
         end
     end
 for d in msgs
-    println(typeof(d ÷ 2^40))
-    println(decode(d ÷ 2^40))
+    println(typeof(d ÷ 2^32))
+    println(decode(d ÷ 2^32))
 end
     1279869254 # FAIL
 end
