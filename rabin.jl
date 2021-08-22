@@ -81,7 +81,7 @@ We need a random prime number in [low, high] and for now a 4^–100 chance of a 
 good enough.
 =#
 
-function randomPrime(low::BigInt, high::BigInt)
+function randomPrime(low, high)
     guess = 0 # Certainly not prime!
     while !isPrime(guess, 100)
         guess = rand(low:high) # Half will be even, the rest have Pr[prime] ≈ 1/log(N).
@@ -94,7 +94,7 @@ A safe prime is the one following a Sophie German prime. If prime(p) and prime(2
 2p + 1 is a safe prime.
 =#
 
-function safePrime(low::BigInt, high::BigInt)
+function safePrime(low, high)
     p = randomPrime(low, high)
     while !isPrime(2 * p + 1,100)
         p = randomPrime(low, high)
@@ -104,9 +104,9 @@ end
 
 # Rabin prime
 
-function RabinPrime(safe, low::BigInt, high::BigInt)
+function RabinPrime(safe, low, high)
     f = safe ? safePrime : randomPrime
-    p = f(low::BigInt, high::BigInt)
+    p = f(low, high)
     while p % 4 != 3
         p = f(low, high)
     end
@@ -160,7 +160,7 @@ encrypt(m, n) = powerMod(m * big"2"^32 + h, 2, n) # Insert tag and square (mod n
 Add comment
 =#
 
-function decrypt(m::BigInt, key)
+function decrypt(m, key)
     (p, q) = key
     n = p * q
     (g, (yP, yQ)) = extendedGCD(p, q)
