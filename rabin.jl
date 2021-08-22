@@ -160,7 +160,7 @@ encrypt(m, n) = powerMod(m * big"2"^32 + h, 2, n) # Insert tag and square (mod n
 Add comment
 =#
 
-function decrypt(m, key)
+function decrypt(m::BigInt, key)
     (p, q) = key
     n = p * q
     (g, (yP, yQ)) = extendedGCD(p, q)
@@ -170,8 +170,8 @@ function decrypt(m, key)
     y = (yP * p * mQ - yQ * q * mP) % n
     msgs = [x, n - x, y, n - y]
     for d in msgs
-        if d % 2^32 == h
-            return d ÷ 2^32
+        if d % big"2"^32 == h
+            return d ÷ big"2"^32
         end
     end
     1279869254 # FAIL
