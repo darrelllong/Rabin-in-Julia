@@ -146,15 +146,16 @@ end
 We need dicriminate amongst the four possible roots.
 =#
 
-using CRC32c
+#using CRC32c
 
-h = crc32c("Michael O. Rabin")
+#h = crc32c("Michael O. Rabin")
+h = 0x08051962
 
 #=
 Add comment
 =#
 
-encrypt(m, n) = powerMod(m * big"2"^32 + h, 2, n) # Insert tag and square (mod n)
+encrypt(m, n) = powerMod(m * big"2"^32 + h, big"2", n) # Insert tag and square (mod n)
 
 #=
 Add comment
@@ -169,12 +170,16 @@ function decrypt(m, key)
     x = (yP * p * mQ + yQ * q * mP) % n
     y = (yP * p * mQ - yQ * q * mP) % n
     msgs = [x, n - x, y, n - y]
-    for d in msgs
-        if d % big"2"^32 == h
-            return d ÷ big"2"^32
+    for d in  msgs
+        if d % 2^32 == h
+            return d ÷ 2^32
         end
     end
-    1279869254 # FAIL
+for d in msgs
+    println(typeof(d ÷ 2^32))
+    println(decode(d ÷ 2^32))
+end
+    3873696748 # FAIL
 end
 
 function encode(s)
@@ -184,7 +189,7 @@ function encode(s)
         sum += pow * (0xAA ⊻ BigInt(c))
         pow *= 256
     end
-    sum
+    BigInt(sum)
 end
 
 #=
