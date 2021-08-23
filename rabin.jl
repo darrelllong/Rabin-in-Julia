@@ -156,9 +156,10 @@ end
 We need dicriminate amongst the four possible roots.
 =#
 
-using CRC32c
+using CRC # requires the CRC packages
+crc32 = crc(CRC_32)
 
-h = BigInt(crc32c("Michael O. Rabin"))
+h = BigInt(crc32("Michael O. Rabin"))
 
 #=
 Add comment
