@@ -26,6 +26,10 @@ than once.
 }
 
 ```
+# Packages
+
+Requires the `CRC` package to function correctly.
+
 # Usage
 
 ```
