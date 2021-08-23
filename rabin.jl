@@ -2,6 +2,17 @@
 
 using Random
 
+# mod must always be positive
+
+function mod(a, n)
+    t = a % n
+    if t < 0
+        n + t
+    else
+        t
+    end
+end
+
 #=
 a^b (mod n) using the method of repeated squares.
 
@@ -16,9 +27,9 @@ function powerMod(a, d, n)
     p = a # Powers of a
     while d > 0
         if isodd(d) # 1 bit in the exponent
-           v = (v * p) % n
+           v = mod(v * p, n)
         end
-        p = p^2 % n # Next power of two
+        p = mod(p^2, n) # Next power of two
         d >>>= 1
     end
     v
@@ -30,7 +41,7 @@ Greatest common divisor, Euclidean version.
 
 function gcd(a, b)
     while b ≠ 0
-        a, b = b, a % b
+        a, b = b, mod(a, b)
     end
     a
 end
@@ -107,7 +118,7 @@ end
 function RabinPrime(safe, low, high)
     f = safe ? safePrime : randomPrime
     p = f(low, high)
-    while p % 4 != 3
+    while mod(p, 4) != 3
         p = f(low, high)
     end
     return p
@@ -156,7 +167,7 @@ Add comment
 
 function encrypt(m, n)
     t = m << 32
-    return ((t + h) * (t + h)) % n
+    return mod((t + h) * (t + h), n)
 end
 
 #=
@@ -169,18 +180,14 @@ function decrypt(m, key)
     (g, (yP, yQ)) = extendedGCD(p, q)
     mP = powerMod(m, (p + 1) ÷ 4, p)
     mQ = powerMod(m, (q + 1) ÷ 4, q)
-    x = (yP * p * mQ + yQ * q * mP) % n
-    y = (yP * p * mQ - yQ * q * mP) % n
+    x = mod(yP * p * mQ + yQ * q * mP, n)
+    y = mod(yP * p * mQ - yQ * q * mP, n)
     msgs = [x, n - x, y, n - y]
     for d in  msgs
-        if d % 2^32 == h
+        if mod(d, 2^32) == h
             return d ÷ 2^32
         end
     end
-for d in msgs
-    println(typeof(d ÷ 2^32))
-    println(decode(d ÷ 2^32))
-end
     1279869254 # FAIL
 end
 
@@ -202,7 +209,7 @@ integer and just pull off the digits.
 function decode(n)
     s = ""
     while n > 0
-        s = s * Char(n % 256)
+        s = s * Char(mod(n, 256))
         n ÷= 256
     end
     s
