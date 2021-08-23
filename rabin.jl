@@ -5,8 +5,7 @@ using Random
 # mod must always be positive
 
 function mod(a, n)
-    t = a % n
-    if t < 0
+    if (t = a % n) < 0
         n + t
     else
         t
@@ -165,10 +164,7 @@ h = BigInt(crc32c("Michael O. Rabin"))
 Add comment
 =#
 
-function encrypt(m, n)
-    t = m << 32
-    return mod((t + h) * (t + h), n)
-end
+encrypt(m, n) = mod((m << 32 + h)^2, n)
 
 #=
 Add comment
